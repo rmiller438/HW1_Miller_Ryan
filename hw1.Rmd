@@ -12,23 +12,32 @@ knit: (function(input_file, encoding) {
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+```{r}
+## Clear workspace
+rm( list = ls() )
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+## Req'd includes
+library( ggplot2 )
+library( scales  )
+library( viridis )
 ```
+```{r plots, fig.align = 'center'}
+## Create plotting
+x  <- seq( from = 0, to = 2 * pi, by = 0.01 )
+y  <- c( sin( x )                    , cos( x ) )
+fn <- c( rep( 'sin(x)', length( x ) ), rep( 'cos(x)', length( x ) ) )
+d  <- data.frame( x, y, fn )
 
-## Including Plots
+## Create custom scale for pi
+pi_scales <- math_format( .x * pi, format = function(x) x / pi )
 
-You can also embed plots, for example:
+## Create plot
+h_ <- ggplot( data = d, aes( x = x, y = y, color = fn ) ) +
+    geom_line( lwd = 0.7 ) + theme_minimal() +
+    scale_x_continuous( labels = pi_scales, breaks = c(0, pi/2, pi, 3*pi/2, 2*pi ) ) +
+    scale_color_viridis( discrete = TRUE ) +
+    theme( legend.title = element_blank() )
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+## Print the plot
+h_
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
